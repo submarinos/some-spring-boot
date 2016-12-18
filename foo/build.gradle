@@ -1,0 +1,55 @@
+buildscript {
+  dependencies {
+    classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE'
+    classpath 'com.bmuschko:gradle-docker-plugin:3.0.4'
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+  compile 'org.springframework.boot:spring-boot-starter-web'
+  compile 'org.springframework.data:spring-data-commons:1.12.4.RELEASE'
+  compile 'org.springframework.data:spring-data-couchbase:2.1.5.RELEASE'
+
+  testCompile 'org.springframework.boot:spring-boot-starter-test'
+  testCompile 'info.cukes:cucumber-java8:1.+'
+  testCompile 'info.cukes:cucumber-junit:1.+'
+  testCompile 'info.cukes:cucumber-spring:1.+'
+  testCompile 'com.squareup.okhttp3:okhttp:3.+'
+}
+
+jar {
+  baseName = 'submarinos-spring'
+  version = '0.1.0'
+}
+
+
+/* Builds docker image on local machine */
+
+docker {
+  url = 'https://192.168.99.100:2376'
+  certPath = new File(System.properties['user.home'], '.docker/machine/certs')
+}
+
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+task buildImage(type: DockerBuildImage, dependsOn: build) {
+  tag = 'submarinos/spring'
+  inputDir = file('build/docker')
+
+  doFirst {
+    copy {
+      from jar
+      into file('build/docker')
+    }
+    copy {
+      from file('src/main/docker')
+      into file('build/docker')
+    }
+  }
+}
