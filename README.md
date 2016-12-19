@@ -12,4 +12,4 @@ mkdir -p foo/build/docker
 
 ## Hello application
 
-http://<docker-machine-url>:8080/fighter
+http://\<hostname-of-docker-host\>:\<port-exposed-on-docker-host\>/fighter
