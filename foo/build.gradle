@@ -1,7 +1,7 @@
 buildscript {
   dependencies {
-    classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE'
-    classpath 'com.bmuschko:gradle-docker-plugin:3.0.4'
+    classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE'
+    classpath 'com.bmuschko:gradle-docker-plugin:3.0.11'
   }
 }
 
@@ -13,9 +13,12 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+  compile 'org.springframework.data:spring-data-commons'
+  compile 'org.springframework.data:spring-data-couchbase'
   compile 'org.springframework.boot:spring-boot-starter-web'
-  compile 'org.springframework.data:spring-data-commons:1.12.4.RELEASE'
-  compile 'org.springframework.data:spring-data-couchbase:2.1.5.RELEASE'
+  compile 'org.springframework.boot:spring-boot-starter-data-rest'
+  compile 'org.springframework.data:spring-data-rest-hal-browser'
+  compile 'org.springframework.data:spring-data-keyvalue'
 
   testCompile 'org.springframework.boot:spring-boot-starter-test'
   testCompile 'info.cukes:cucumber-java8:1.+'
@@ -32,8 +35,9 @@ jar {
 
 /* Builds docker image on local machine */
 
+def dockerUrl = System.getenv('DOCKER_URL') ?: 'https://192.168.99.100:2376'
 docker {
-  url = 'https://192.168.99.100:2376'
+  url = dockerUrl
   certPath = new File(System.properties['user.home'], '.docker/machine/certs')
 }
 
